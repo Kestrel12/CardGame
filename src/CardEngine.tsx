@@ -8,17 +8,17 @@ class Card {
 
 }
 
-class RankSuitCard extends Card {
+class RankSuitColorCard extends Card {
 
     public readonly Rank: string;
-    public readonly RankIndex: bigint;
     public readonly Suit: string;
+    public readonly Color: string;
 
-    public constructor(rank: string, rankIndex: bigint, suit: string) {
+    public constructor(rank: string, suit: string, color: string) {
         super();
         this.Rank = rank;
-        this.RankIndex = rankIndex;
         this.Suit = suit;
+        this.Color = color;
     }
 
 }
@@ -40,4 +40,16 @@ class CardContainer {
 
 }
 
-export {Card, RankSuitCard, CardContainer };
+class Player {
+
+    public readonly IsComputer: boolean;
+    public readonly CardContainers: CardContainer[];
+
+    public constructor(isComputer: boolean, cardContainers: CardContainer[]) {
+        this.IsComputer = isComputer;
+        this.CardContainers = cardContainers; 
+    }
+
+}
+
+export {Card, RankSuitColorCard, CardContainer, Player };

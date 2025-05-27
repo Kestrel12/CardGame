@@ -1,17 +1,21 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { RankSuitCard, CardContainer } from './CardEngine';
+import './resources/css/cards.css';
+import { RankSuitColorCard, CardContainer, Player } from './CardEngine';
 
 const gameDefinitionEights2p = {
 
     decks: [
-        new CardContainer("draw", []),
+        new CardContainer("draw", [
+            new RankSuitColorCard()
+        ]),
         new CardContainer("discard", [])
     ],
 
     players: [
-        
+        new Player(false, [new CardContainer("hand", [])]),
+        new Player(true, [new CardContainer("hand", [])])
     ]
 
 }
