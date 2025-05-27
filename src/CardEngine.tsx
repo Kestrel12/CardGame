@@ -1,3 +1,11 @@
+class Suit {
+
+    public readonly SuitName: string;
+    public readonly SuitIcon: string;
+
+    public constructor
+}
+
 class Card {
 
     public Container: CardContainer | null;
