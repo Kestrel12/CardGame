@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Styles for CSS Playing Cards
  *
  * @author   Anika Henke <anika@selfthinker.org>
@@ -45,14 +45,21 @@
     cursor: pointer;
 }
 
-.playingCards .card.back {
+/*.playingCards .card.back {
     text-indent: -4000px;
     background-color: #ccc;
     background-repeat: repeat;
-    background-image: url(data:image/gif;base64,R0lGODlhJAAkAJEAAOjFsezdztOKbL5QKCH5BAAAAAAALAAAAAAkACQAAAL/HC4RAqm/mmLHyHmAbczB11Ea8ombJKSgKo6Z17pXFznmS1JptiX0z3vVhpEKDoUIkoa0olGIUeZUk1RI6Yn2mh/FDAt6frOrRRTqXPpsVLYugzxaVy+YcBdnoWPZOT0E4eckQtZFZBjWoHixQFWl6Nhol6R2p1Okt5TGaEWZA6fjiMdhZgPHeWrTWGVq+jTZg1HYyAEWKLYzmyiGKoUimilz+YYryyTlg5RcDJSAbNx0Q7lMcbIGEyzTK8zVdfVaImzs/QV+prYqWWW2ObkoOApM/Em/rUlIm7fijs8a2EEKEaZ3AsMUgneEU6RcpJbZ27aGHkAO2Ors8xQH1IR0Bn5YnOtVAAA7); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
+    background-image: url(data:image/gif;base64,R0lGODlhJAAkAJEAAOjFsezdztOKbL5QKCH5BAAAAAAALAAAAAAkACQAAAL/HC4RAqm/mmLHyHmAbczB11Ea8ombJKSgKo6Z17pXFznmS1JptiX0z3vVhpEKDoUIkoa0olGIUeZUk1RI6Yn2mh/FDAt6frOrRRTqXPpsVLYugzxaVy+YcBdnoWPZOT0E4eckQtZFZBjWoHixQFWl6Nhol6R2p1Okt5TGaEWZA6fjiMdhZgPHeWrTWGVq+jTZg1HYyAEWKLYzmyiGKoUimilz+YYryyTlg5RcDJSAbNx0Q7lMcbIGEyzTK8zVdfVaImzs/QV+prYqWWW2ObkoOApM/Em/rUlIm7fijs8a2EEKEaZ3AsMUgneEU6RcpJbZ27aGHkAO2Ors8xQH1IR0Bn5YnOtVAAA7);  * image is "Pattern 069" from http://www.squidfingers.com/patterns/ *
     background-image: -moz-repeating-linear-gradient(34% 6% 135deg,#0F1E59, #75A1BF, #3E3E63 50%);
     background-image: -webkit-gradient(radial, center center, 20, center center, 80, from(#3c3), color-stop(0.4, #363), to(#030));
-    /* yes, it's intentional that Mozilla, Webkit, Opera and IE all will get different backgrounds ... why not? :) */
+    * yes, it's intentional that Mozilla, Webkit, Opera and IE all will get different backgrounds ... why not? :) *
+}*/
+
+/* from https://10015.io/tools/css-background-pattern-generator */
+.playingCards .card.back {
+    background: linear-gradient(45deg,#0000 calc(25%/3), #5253a4 0 calc(50%/3), #0000 0 calc(250%/3), #5253a4 0 calc(275%/3), #0000 0),linear-gradient( 45deg,#5253a4 calc(25%/3), #0000 0 calc(50%/3), #5253a4 0 25%, #0000 0 75%, #5253a4 0 calc(250%/3), #0000 0 calc(275%/3), #5253a4 0), linear-gradient(-45deg,#0000 calc(25%/3), #5253a4 0 calc(50%/3), #0000 0 calc(250%/3), #5253a4 0 calc(275%/3), #0000 0),linear-gradient(-45deg,#5253a4 calc(25%/3), #0000 0 calc(50%/3), #5253a4 0 25%, #0000 0 75%, #5253a4 0 calc(250%/3), #0000 0 calc(275%/3), #5253a4 0) #79a4db;
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
 }
 
 /* suit colours
@@ -339,7 +346,7 @@
     */
 }
 
-.playingCards.faceImages .card.rank-j.diams  { background-image: url(faces/JD.gif); }
+/*.playingCards.faceImages .card.rank-j.diams  { background-image: url(faces/JD.gif); }
 .playingCards.faceImages .card.rank-j.hearts { background-image: url(faces/JH.gif); }
 .playingCards.faceImages .card.rank-j.spades { background-image: url(faces/JS.gif); }
 .playingCards.faceImages .card.rank-j.clubs  { background-image: url(faces/JC.gif); }
@@ -354,7 +361,7 @@
 .playingCards.faceImages .card.rank-k.spades { background-image: url(faces/KS.gif); }
 .playingCards.faceImages .card.rank-k.clubs  { background-image: url(faces/KC.gif); }
 
-.playingCards.faceImages .card.joker         { background-image: url(faces/joker.gif); }
+.playingCards.faceImages .card.joker         { background-image: url(faces/joker.gif); }*/
 .playingCards.simpleCards .card.rank-j,
 .playingCards.simpleCards .card.rank-q,
 .playingCards.simpleCards .card.rank-k       { background-image: none !important; }
@@ -376,25 +383,27 @@
     letter-spacing: normal;
     line-height: 1;
 }
-.playingCards .card.rank-j .suit:after {
-    content: "\265F";
-    right: .15em;
+.playingCards .card.rank-J .suit:after {
+    font-size: 3em;
+    line-height: 2.2;
+    content: "⚜";
 }
-.playingCards .card.rank-q .suit:after {
-    content: "\265B";
+.playingCards .card.rank-Q .suit:after {
+    font-size: 2.5em;
+    line-height: 2.5;
+    content: "♕";
 }
-.playingCards .card.rank-k .suit:after {
-    content: "\265A";
+.playingCards .card.rank-K .suit:after {
+    font-size: 3em;
+    line-height: 2.5;
+    content: "♔";
 }
 /* joker (inner symbol) */
 .playingCards.faceImages .card.joker .rank:after {
     content: "";
 }
 .playingCards .card.joker .rank:after {
-    position: absolute;
-    content: "\2766";
-    top: .4em;
-    left: .1em;
+    content: "✯";
 }
 
 /* big suits in middle */
@@ -465,7 +474,7 @@
     clear: both;
 }
 .playingCards ul.hand {
-    margin-bottom: 3.5em;
+    /* margin-bottom: 3.5em; */
 }
 .playingCards ul.table li,
 .playingCards ul.hand li,
@@ -628,3 +637,17 @@
 .playingCards ul.deck li:nth-child(30) { left: 58px; bottom: 29px; }
 .playingCards ul.deck li:nth-child(31) { left: 60px; bottom: 30px; }
 .playingCards ul.deck li:nth-child(32) { left: 62px; bottom: 31px; }
+
+
+/*.playingCards .card .moving {
+    position: fixed;
+    transition: top 1s, left 1s;
+    
+}*/
+
+.cardLiTransition {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    transition: all .5s;
+}
