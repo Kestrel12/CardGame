@@ -639,6 +639,9 @@
 .playingCards ul.deck li:nth-child(32) { left: 62px; bottom: 31px; }
 
 
+/* additional customizations
+********************************************************************/
+
 /*.playingCards .card .moving {
     position: fixed;
     transition: top 1s, left 1s;
