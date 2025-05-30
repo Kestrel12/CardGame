@@ -1,17 +1,26 @@
 
 class Game {
 
+    public DrawDeck: CardContainer | undefined;
+    public DiscardDeck: CardContainer | undefined;
+    public Players: Player[] = [];
+
+    public constructor() {
+        this.DrawDeck = new CardContainer("draw", [], (c) => { });
+        this.DiscardDeck = new CardContainer("discard", [], (c) => { });
+    }
+
     Init(cards: RankSuitCard[], decks: CardContainer[], players: Player[]): void {
-        alert("init called");
+        //alert("init called");
         const handSize = 5;
-        const drawDeck = decks.find(x => x.ContainerName === "draw");
-        if (!drawDeck) {
+        this.DrawDeck = decks.find(x => x.ContainerName === "draw");
+        if (!this.DrawDeck) {
             alert("No draw deck found");
             return;
         }
 
-        const discardDeck = decks.find(x => x.ContainerName === "discard");
-        if (!discardDeck) {
+        this.DiscardDeck = decks.find(x => x.ContainerName === "discard");
+        if (!this.DiscardDeck) {
             alert("no discard deck found");
             return;
         }
@@ -33,15 +42,16 @@ class Game {
             deckIndex = deckIndex + handSize;
         }
 
-        discardDeck.SetContents([cards[deckIndex]]);
-        alert(discardDeck.Contents.length);
+        this.DiscardDeck.SetContents([cards[deckIndex]]);
         deckIndex = deckIndex + 1;
 
-        drawDeck.SetContents(cards.slice(deckIndex));
+        this.DrawDeck.SetContents(cards.slice(deckIndex));
     }
 
     Action(card: RankSuitCard) {
-
+        alert("action called on " + card.Rank + " " + card.Suit.SuitName)
+        card?.Container?.RemoveCard(card);
+        this.DiscardDeck?.AddCard(card);
     }
 
 }
@@ -63,17 +73,16 @@ class Card {
 
     public Container: CardContainer | null;
 
+    public Id: number;
+
     // Marked as new when a card is added to a hand for animation.
     // Marked as false after animation is triggered.
     public IsNew: boolean;
 
-    public constructor() {
+    public constructor(id: number) {
+        this.Id = id;
         this.Container = null;
         this.IsNew = false;
-    }
-
-    public onClick() {
-
     }
 
 }
@@ -83,8 +92,8 @@ class RankSuitCard extends Card {
     public readonly Rank: string;
     public readonly Suit: Suit;
 
-    public constructor(rank: string, suit: Suit) {
-        super();
+    public constructor(id:number, rank: string, suit: Suit) {
+        super(id);
         this.Rank = rank;
         this.Suit = suit;
     }
@@ -106,7 +115,7 @@ class CardContainer {
     }
 
     public SetContents(cards: RankSuitCard[]) {
-
+        alert("SetContents called on " + this.ContainerName + " with " + cards.length + " cards.");
         for (let c of cards) {
             c.Container = this;
             c.IsNew = true;
@@ -122,7 +131,10 @@ class CardContainer {
     }
 
     public RemoveCard(card: RankSuitCard) {
-        const newContents = this.Contents.filter(c => c !== card);
+        alert("Contents.length = " + this.Contents.length);
+        const newContents = this.Contents.filter(c => c.Id !== card.Id);
+        alert("newContents.length = " + newContents.length);
+        card.Container = null;
         this.SetContentsInternal(newContents);
     }
 

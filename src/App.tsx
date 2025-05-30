@@ -15,9 +15,10 @@ const suits = [suitSpades, suitHearts, suitDiams, suitClubs];
 const values = ["7", "8", "9", "10", "J", "Q", "K", "A"];
 
 const deck: RankSuitCard[] = [];
+let cardId = 0;
 for (let s of suits) {
     for (let v of values) {
-        deck.push(new RankSuitCard(v, s));
+        deck.push(new RankSuitCard(cardId, v, s));
     }
 }
 

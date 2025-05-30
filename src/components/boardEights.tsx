@@ -28,8 +28,8 @@ export default function BoardEights(
 
 	}
 
-	function OnCardPostClick(card: RankSuitCard) {
-
+	function OnCardClick(card: RankSuitCard) {
+		game.Action(card);
 	}
 
 
@@ -39,27 +39,27 @@ export default function BoardEights(
 			<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
 
 				<ul className="hand">
-					{p1.CardContainers[0].Contents.map(c => 
-						<CardComponent card={c}/>)}
+					{p1.CardContainers[0].Contents.map(c =>
+						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<hr />
 
 				<ul style={{ display: "inline-block", width: "200px", height: "150px" }} className="deck">
-					{drawContainer.Contents.map(c =>
-						<CardComponent card={c} />)}
+					{drawContainer.Contents.slice(0, 10).map(c =>
+						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<ul style={{display:"inline-block", width: "200px", height: "150px"}} className="deck">
 					{discardContainer.Contents.map(c =>
-						<RankSuitCardComponent card={c}/>)}
+						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<hr />
 
 				<ul className="hand">
 					{p0.CardContainers[0].Contents.map(c =>
-						<RankSuitCardComponent card={c} />)}
+						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 			</div>
