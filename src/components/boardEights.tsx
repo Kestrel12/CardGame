@@ -2,34 +2,36 @@ import { useState, useEffect } from 'react';
 import { Game, RankSuitCard, CardContainer, Player } from '../CardEngine';
 import { CardComponent, RankSuitCardComponent } from './CardComponent';
 
-export default function BoardEights(
-	{ cards, game }: { cards: RankSuitCard[], game: Game }) {
+export default function BoardEights() {
 
 
-	const [drawDeck, setDrawDeck] = useState([] as RankSuitCard[]);
-	const drawContainer = new CardContainer("draw", drawDeck, setDrawDeck);
+	const [game, setGame] = useState(new Game());
 
-	const [discardDeck, setDiscardDeck] = useState([] as RankSuitCard[]);
-	const discardContainer = new CardContainer("discard", discardDeck, setDiscardDeck);
 
-	const [p0Hand, setP0Hand] = useState([] as RankSuitCard[]);
-	const p0HandContainer = new CardContainer("hand", p0Hand, setP0Hand);
-	const p0 = new Player(false, [p0HandContainer]);
+	//const [drawDeck, setDrawDeck] = useState([] as RankSuitCard[]);
+	//const drawContainer = new CardContainer("draw", drawDeck, setDrawDeck);
 
-	const [p1Hand, setP1Hand] = useState([] as RankSuitCard[]);
-	const p1HandContainer = new CardContainer("hand", p1Hand, setP1Hand);
-	const p1 = new Player(true, [p1HandContainer]);
+	//const [discardDeck, setDiscardDeck] = useState([] as RankSuitCard[]);
+	//const discardContainer = new CardContainer("discard", discardDeck, setDiscardDeck);
 
-	useEffect(() => {
-		game.Init(cards, [drawContainer, discardContainer], [p0, p1]);
-	}, []);
+	//const [p0Hand, setP0Hand] = useState([] as RankSuitCard[]);
+	//const p0HandContainer = new CardContainer("hand", p0Hand, setP0Hand);
+	//const p0 = new Player(false, [p0HandContainer]);
+
+	//const [p1Hand, setP1Hand] = useState([] as RankSuitCard[]);
+	//const p1HandContainer = new CardContainer("hand", p1Hand, setP1Hand);
+	//const p1 = new Player(true, [p1HandContainer]);
+
+	//useEffect(() => {
+	//	game.Init(cards, [drawContainer, discardContainer], [p0, p1]);
+	//}, []);
 
 	function OnCardPreClick(card: RankSuitCard) {
 
 	}
 
 	function OnCardClick(card: RankSuitCard) {
-		game.Action(card);
+		setGame(game.Action(card));
 	}
 
 
@@ -39,26 +41,26 @@ export default function BoardEights(
 			<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
 
 				<ul className="hand">
-					{p1.CardContainers[0].Contents.map(c =>
+					{game.Players[1].CardContainers[0].Contents.map(c =>
 						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<hr />
 
 				<ul style={{ display: "inline-block", width: "200px", height: "150px" }} className="deck">
-					{drawContainer.Contents.slice(0, 10).map(c =>
+					{game.DrawDeck.Contents.slice(0, 10).map(c =>
 						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<ul style={{display:"inline-block", width: "200px", height: "150px"}} className="deck">
-					{discardContainer.Contents.map(c =>
+					{game.DiscardDeck.Contents.map(c =>
 						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<hr />
 
 				<ul className="hand">
-					{p0.CardContainers[0].Contents.map(c =>
+					{game.Players[0].CardContainers[0].Contents.map(c =>
 						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
 				</ul>
 

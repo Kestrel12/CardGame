@@ -71,8 +71,7 @@ function App() {
 
   return (
       <>
-          <BoardEights
-              cards={deck} game={game} />
+          <BoardEights />
     </>
   );
 }
