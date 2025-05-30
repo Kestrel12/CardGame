@@ -1,28 +1,34 @@
-import { useState } from 'react';
-import { RankSuitCard, CardContainer, Player } from '../CardEngine';
+import { useState, useEffect } from 'react';
+import { Game, RankSuitCard, CardContainer, Player } from '../CardEngine';
 import { CardComponent, RankSuitCardComponent } from './CardComponent';
 
 export default function BoardEights(
-	{ deck }: { deck: RankSuitCard[]}) {
+	{ cards, game }: { cards: RankSuitCard[], game: Game }) {
 
-	// cut inputs down to cards + instructions
 
-	const [drawDeck, setDrawDeck] = useState(deck);
+	const [drawDeck, setDrawDeck] = useState([] as RankSuitCard[]);
 	const drawContainer = new CardContainer("draw", drawDeck, setDrawDeck);
 
 	const [discardDeck, setDiscardDeck] = useState([] as RankSuitCard[]);
 	const discardContainer = new CardContainer("discard", discardDeck, setDiscardDeck);
 
+	const [p0Hand, setP0Hand] = useState([] as RankSuitCard[]);
+	const p0HandContainer = new CardContainer("hand", p0Hand, setP0Hand);
+	const p0 = new Player(false, [p0HandContainer]);
+
 	const [p1Hand, setP1Hand] = useState([] as RankSuitCard[]);
 	const p1HandContainer = new CardContainer("hand", p1Hand, setP1Hand);
-	const p1 = new Player(false, [p1HandContainer]);
+	const p1 = new Player(true, [p1HandContainer]);
 
-	const [p2Hand, setP2Hand] = useState([] as RankSuitCard[]);
-	const p2HandContainer = new CardContainer("hand", p2Hand, setP2Hand);
-	const p2 = new Player(true, [p2HandContainer]);
-	
+	useEffect(() => {
+		game.Init(cards, [drawContainer, discardContainer], [p0, p1]);
+	}, []);
 
-	function OnCardClick(card: RankSuitCard, container: CardContainer) {
+	function OnCardPreClick(card: RankSuitCard) {
+
+	}
+
+	function OnCardPostClick(card: RankSuitCard) {
 
 	}
 
@@ -33,26 +39,26 @@ export default function BoardEights(
 			<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
 
 				<ul className="hand">
-					{p2.CardContainers[0].Contents.map(c => 
+					{p1.CardContainers[0].Contents.map(c => 
 						<CardComponent card={c}/>)}
 				</ul>
 
 				<hr />
 
-				<ul style={{ display: "inline-block", width: "100px", height: "150px" }} className="deck">
+				<ul style={{ display: "inline-block", width: "200px", height: "150px" }} className="deck">
 					{drawContainer.Contents.map(c =>
-						<RankSuitCardComponent card={c} />)}
+						<CardComponent card={c} />)}
 				</ul>
 
-				<ul style={{display:"inline-block", width: "100px", height: "150px"}} className="deck">
+				<ul style={{display:"inline-block", width: "200px", height: "150px"}} className="deck">
 					{discardContainer.Contents.map(c =>
-						<CardComponent card={c}/>)}
+						<RankSuitCardComponent card={c}/>)}
 				</ul>
 
 				<hr />
 
 				<ul className="hand">
-					{p1.CardContainers[0].Contents.map(c =>
+					{p0.CardContainers[0].Contents.map(c =>
 						<RankSuitCardComponent card={c} />)}
 				</ul>
 

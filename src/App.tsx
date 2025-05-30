@@ -2,7 +2,7 @@
 import logo from './logo.svg';
 import './App.css';
 import './resources/css/cards.css';
-import { Suit, RankSuitCard, CardContainer, Player } from './CardEngine';
+import { Game, Suit, RankSuitCard, CardContainer, Player } from './CardEngine';
 import BoardEights from './components/BoardEights';
 
 
@@ -11,15 +11,27 @@ const suitHearts = new Suit("hearts", "♥", "red");
 const suitDiams = new Suit("diams", "♦", "red");
 const suitClubs = new Suit("clubs", "♣", "black");
 
-const deck = [
-    new RankSuitCard("2", suitClubs),
-    new RankSuitCard("4", suitHearts),
-    new RankSuitCard("J", suitHearts),
-    new RankSuitCard("7", suitClubs),
-    new RankSuitCard("Q", suitClubs),
-    new RankSuitCard("3", suitHearts),
-    new RankSuitCard("J", suitSpades),
-    new RankSuitCard("Q", suitHearts)]
+const suits = [suitSpades, suitHearts, suitDiams, suitClubs];
+const values = ["7", "8", "9", "10", "J", "Q", "K", "A"];
+
+const deck: RankSuitCard[] = [];
+for (let s of suits) {
+    for (let v of values) {
+        deck.push(new RankSuitCard(v, s));
+    }
+}
+
+const game = new Game();
+
+//const deck = [
+//    new RankSuitCard("2", suitClubs),
+//    new RankSuitCard("4", suitHearts),
+//    new RankSuitCard("J", suitHearts),
+//    new RankSuitCard("7", suitClubs),
+//    new RankSuitCard("Q", suitClubs),
+//    new RankSuitCard("3", suitHearts),
+//    new RankSuitCard("J", suitSpades),
+//    new RankSuitCard("Q", suitHearts)]
 
 const gameDefinitionEights2p = {
 
@@ -59,7 +71,7 @@ function App() {
   return (
       <>
           <BoardEights
-              deck={deck} />
+              cards={deck} game={game} />
     </>
   );
 }
