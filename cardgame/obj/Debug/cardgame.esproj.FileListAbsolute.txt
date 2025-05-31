@@ -1,0 +1,2 @@
+C:\SourceCode\CardGame2\Games\CardGame\obj\Debug\cardgame.esproj.CoreCompileInputs.cache
+C:\SourceCode\CardGame1\CardGame\obj\Debug\cardgame.esproj.CoreCompileInputs.cache

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Card, RankSuitCard } from '../CardEngine';
-import CSS from 'csstype';
+import type CSS from 'csstype';
 
 function CardComponent({ card }: { card: Card }) {
     return (
