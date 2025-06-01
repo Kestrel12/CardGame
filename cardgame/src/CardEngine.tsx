@@ -37,8 +37,8 @@ class Game {
             this.Players = game.Players
         } else {
 
-            this.DrawDeck = new CardContainer("draw", []);
-            this.DiscardDeck = new CardContainer("discard", []);
+            this.DrawDeck = new CardContainer("draw", false, []);
+            this.DiscardDeck = new CardContainer("discard", true, []);
 
             let cards: RankSuitCard[] = [];
             let cardId = 0;
@@ -57,8 +57,8 @@ class Game {
         //alert("init called");
         const handSize = 5;
 
-        this.Players.push(new Player(false, [new CardContainer("hand", [])]));
-        this.Players.push(new Player(true, [new CardContainer("hand", [])]));
+        this.Players.push(new Player(false, [new CardContainer("hand", true, [])]));
+        this.Players.push(new Player(true, [new CardContainer("hand", false, [])]));
 
         if (this.Players.length * handSize + 1 > cards.length) {
             alert("Not enough cards to complete setup");
@@ -95,8 +95,8 @@ class Game {
 class Card {
 
     public Container: CardContainer | null;
-
-    public Id: number;
+    public readonly Id: number;
+    public FaceUp: boolean
 
     // Marked as new when a card is added to a hand for animation.
     // Marked as false after animation is triggered.
@@ -105,6 +105,7 @@ class Card {
     public constructor(id: number) {
         this.Id = id;
         this.Container = null;
+        this.FaceUp = false;
         this.IsNew = false;
     }
 
@@ -128,10 +129,12 @@ type SetContentsFunc = (c: RankSuitCard[]) => void;
 class CardContainer {
 
     public readonly ContainerName: string;
+    public readonly FaceUp: boolean;
     public Contents: RankSuitCard[];
 
-    public constructor(containerName: string, contents: RankSuitCard[]) {
+    public constructor(containerName: string, faceUp: boolean, contents: RankSuitCard[]) {
         this.ContainerName = containerName;
+        this.FaceUp = faceUp;
         this.Contents = contents;
     }
 
@@ -140,6 +143,7 @@ class CardContainer {
         for (let c of cards) {
             c.Container = this;
             c.IsNew = true;
+            c.FaceUp = this.FaceUp;
         }
         this.Contents = cards;
     }
@@ -147,6 +151,7 @@ class CardContainer {
     public AddCard(card: RankSuitCard) {
         card.Container = this;
         card.IsNew = true;
+        card.FaceUp = this.FaceUp;
         this.Contents = [...this.Contents, card];
     }
 
