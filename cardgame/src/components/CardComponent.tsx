@@ -18,6 +18,7 @@ function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick:
 
     const [liClass, setLiClass] = useState("");
     const [liStyle, setLiStyle] = useState({ opacity: undefined, top: undefined } as CSS.Properties);
+    [card.Moving, card.SetMoving] = useState(false);
     const liRef = useRef<HTMLLIElement>(null);
 
 
@@ -32,13 +33,23 @@ function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick:
 
             setTimeout(() => {
                 onClick(card);
+
+                // cleanup due to the card state getting re-used
+                // by a different card when they shift down in the collection
                 setLiClass("cardLiTransition");
                 setLiStyle({ opacity: 1, top: "0px" });
+                card.SetMoving(false);
             }, 500);
 
         }
 
     }
+
+    useEffect(() => {
+        if (card.Moving) {
+            handleClick();
+        }
+    }, [card.Moving]);
 
     useEffect(() => {
         setLiStyle({ opacity: 1, top: "0px" });

@@ -28,6 +28,8 @@ class Game {
     public DiscardDeck: CardContainer;
     public Players: Player[] = [];
 
+    private currentPlayerIndex: number = 0;
+
 
     public constructor(game?: Game) {
 
@@ -40,16 +42,32 @@ class Game {
             this.DrawDeck = new CardContainer("draw", false, []);
             this.DiscardDeck = new CardContainer("discard", true, []);
 
-            let cards: RankSuitCard[] = [];
+            const cards: RankSuitCard[] = [];
             let cardId = 0;
-            for (let s of suits) {
-                for (let v of values) {
+            for (const s of suits) {
+                for (const v of values) {
                     cards.push(new RankSuitCard(cardId, v, s));
                     cardId = cardId + 1;
                 }
             }
 
             this.Init(cards);
+        }
+    }
+
+    public Copy(): Game {
+        const copy = new Game();
+        copy.DrawDeck = this.DrawDeck;
+        copy.DiscardDeck = this.DiscardDeck;
+        copy.Players = this.Players;
+        copy.SetCurrentPlayerIndex(this.currentPlayerIndex);
+        return copy;
+    }
+
+    public SetCurrentPlayerIndex(playerIndex: number): void {
+        this.currentPlayerIndex = playerIndex;
+        if (this.Players[this.currentPlayerIndex].IsComputer) {
+            this.ComputerTurn();
         }
     }
 
@@ -72,7 +90,7 @@ class Game {
         }
 
         let deckIndex = 0;
-        for (let p of this.Players) {
+        for (const p of this.Players) {
             p.CardContainers[0].SetContents(cards.slice(deckIndex, deckIndex + handSize));
             deckIndex = deckIndex + handSize;
         }
@@ -81,13 +99,25 @@ class Game {
         deckIndex = deckIndex + 1;
 
         this.DrawDeck.SetContents(cards.slice(deckIndex));
+
+        if (this.Players[this.currentPlayerIndex].IsComputer) {
+            this.ComputerTurn();
+        }
+
     }
 
     public Action(card: RankSuitCard): Game {
         //alert("action called on " + card.Rank + " " + card.Suit.SuitName)
-        let c = this.Players[0].CardContainers[0].RemoveCard(card);
+        const c = this.Players[this.currentPlayerIndex].CardContainers[0].RemoveCard(card);
         if (c) this.DiscardDeck?.AddCard(c);
-        return new Game(this);
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.length;
+        return this.Copy();
+    }
+
+    public ComputerTurn() {
+        setTimeout(() => {
+            this.Players[this.currentPlayerIndex].CardContainers[0].Contents[0].SetMoving(true);
+        }, 500)
     }
 
 }
@@ -96,17 +126,17 @@ class Card {
 
     public Container: CardContainer | null;
     public readonly Id: number;
-    public FaceUp: boolean
+    public FaceUp: boolean;
 
-    // Marked as new when a card is added to a hand for animation.
-    // Marked as false after animation is triggered.
-    public IsNew: boolean;
+    public SetMoving: (b: boolean) => void;
+    public Moving: boolean; // true when card is being moved by computer
 
     public constructor(id: number) {
         this.Id = id;
         this.Container = null;
         this.FaceUp = false;
-        this.IsNew = false;
+        this.Moving = false;
+        this.SetMoving = (b: boolean) => this.Moving = b;
     }
 
 }
@@ -124,8 +154,6 @@ class RankSuitCard extends Card {
 
 }
 
-type SetContentsFunc = (c: RankSuitCard[]) => void;
-
 class CardContainer {
 
     public readonly ContainerName: string;
@@ -140,9 +168,9 @@ class CardContainer {
 
     public SetContents(cards: RankSuitCard[]) {
         //alert("SetContents called on " + this.ContainerName + " with " + cards.length + " cards.");
-        for (let c of cards) {
+        for (const c of cards) {
             c.Container = this;
-            c.IsNew = true;
+            c.Moving = false;
             c.FaceUp = this.FaceUp;
         }
         this.Contents = cards;
@@ -150,14 +178,14 @@ class CardContainer {
 
     public AddCard(card: RankSuitCard) {
         card.Container = this;
-        card.IsNew = true;
+        card.Moving = false;
         card.FaceUp = this.FaceUp;
         this.Contents = [...this.Contents, card];
     }
 
     public RemoveCard(card: RankSuitCard): RankSuitCard | null {
         //alert("Contents" + this.Contents.map(c => c.Id)
-        let removed = this.Contents.find(c => c.Id === card.Id);
+        const removed = this.Contents.find(c => c.Id === card.Id);
         if (!removed) return null;
         const newContents = this.Contents.filter(c => c.Id !== card.Id);
         //alert("newContents.length = " + newContents.length);
