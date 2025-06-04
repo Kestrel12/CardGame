@@ -1,18 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Card, RankSuitCard } from '../CardEngine';
+import { Game, Card, RankSuitCard } from '../CardEngine';
 import type CSS from 'csstype';
 
-function CardComponent({ card }: { card: Card }) {
-    return (
-        <li>
-            <div className="card back">
-            
-            </div>
-        </li>
-    );
-}
 
-function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick: ((c:RankSuitCard) => void) }) {
+function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: RankSuitCard, onClick: ((c:RankSuitCard) => void) }) {
 
     const cardClass = "card rank-" + card.Rank + " " + card.Suit.SuitName;
 
@@ -23,31 +14,31 @@ function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick:
 
 
     function handleClick() {
-        //let newContainer = card.StartHandleClick();
-        if (liRef.current) {
 
-            //const rect = liRef.current.getBoundingClientRect();
+        if (!game.IsPlayEnabled(card)) { return; }
 
-            setLiStyle({ opacity: 0, top: "-50px" });
-            setLiClass("");
+        triggerAction();
 
-            setTimeout(() => {
-                onClick(card);
+    }
 
-                // cleanup due to the card state getting re-used
-                // by a different card when they shift down in the collection
-                setLiClass("cardLiTransition");
-                setLiStyle({ opacity: 1, top: "0px" });
-                card.SetMoving(false);
-            }, 500);
+    function triggerAction() {
+        setLiStyle({ opacity: 0, top: "-50px" });
+        //setLiClass("");
 
-        }
+        setTimeout(() => {
+            onClick(card);
 
+            // cleanup due to the card state getting re-used
+            // by a different card when they shift down in the collection
+            //setLiClass("cardLiTransition");
+            //setLiStyle({ opacity: 1, top: "0px" });
+            //card.SetMoving(false);
+        }, 500);
     }
 
     useEffect(() => {
         if (card.Moving) {
-            handleClick();
+            triggerAction();
         }
     }, [card.Moving]);
 
@@ -58,7 +49,7 @@ function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick:
 
     if (card.FaceUp) {
         return (
-            <li key={card.Id} ref={liRef} className="cardLiTransition" style={liStyle}>
+            <li ref={liRef} className="cardLiTransition" style={liStyle}>
                 <div className={cardClass} onClick={handleClick}>
                     <span className="rank">{card.Rank}</span>
                     <span className="suit">{card.Suit.SuitIcon}</span>
@@ -67,7 +58,7 @@ function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick:
         );
     } else {
         return (
-            <li key={card.Id} ref={liRef} className="cardLiTransition" style={liStyle}>
+            <li ref={liRef} className="cardLiTransition" style={liStyle}>
                 <div className="card back" onClick={handleClick}>
                 </div>
             </li>
@@ -75,4 +66,4 @@ function RankSuitCardComponent({ card, onClick }: { card: RankSuitCard, onClick:
     }
 }
 
-export { CardComponent, RankSuitCardComponent };
+export { RankSuitCardComponent };

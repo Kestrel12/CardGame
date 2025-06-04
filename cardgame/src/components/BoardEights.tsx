@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Game, RankSuitCard, CardContainer, Player } from '../CardEngine';
-import { CardComponent, RankSuitCardComponent } from './CardComponent';
+import { RankSuitCardComponent } from './CardComponent';
 
 export default function BoardEights() {
 
 
 	const [game, setGame] = useState(new Game());
+
 
 
 	//const [drawDeck, setDrawDeck] = useState([] as RankSuitCard[]);
@@ -36,36 +37,66 @@ export default function BoardEights() {
 
 
 	return (
+		<>
 		<div className="playingCards">
 
 			<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
 
 				<ul className="hand">
 					{game.Players[1].CardContainers[0].Contents.map(c =>
-						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
+						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<hr />
 
 				<ul style={{ display: "inline-block", width: "200px", height: "150px" }} className="deck">
-					{game.DrawDeck.Contents.slice(0, 10).map(c =>
-						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
+					{game.DrawDeck.Contents.slice(-10).map(c =>
+						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<ul style={{display:"inline-block", width: "200px", height: "150px"}} className="deck">
-					{game.DiscardDeck.Contents.map(c =>
-						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
+					{game.DiscardDeck.Contents.slice(-10).map(c =>
+						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
 				</ul>
 
 				<hr />
 
 				<ul className="hand">
 					{game.Players[0].CardContainers[0].Contents.map(c =>
-						<RankSuitCardComponent card={c} onClick={OnCardClick} />)}
+						<RankSuitCardComponent key={c.Id}  game={game} card={c} onClick={OnCardClick} />)}
 				</ul>
 
 			</div>
 
 		</div>
+
+		<div style={{ display: "none" }} className="modal">
+			<h3>
+				You Win!
+			</h3>
+			<div className="button">
+				Restart
+			</div>
+		</div>
+
+			<div style={{display: "none"}} className="modal">
+			<h3>
+				Wild Card &mdash; Pick a Suit!
+			</h3>
+				<div className="button">
+					<span style={{ color: "red" }}>♥</span>
+				</div>
+				<div className="button">
+					♠
+				</div>
+				<div className="button">
+					<span style={{ color: "red" }}>♦</span>
+				</div>
+				<div className="button">
+					♣
+				</div>
+		</div>
+
+		</>
 	)
 }

@@ -27,8 +27,11 @@ class Game {
     public DrawDeck: CardContainer;
     public DiscardDeck: CardContainer;
     public Players: Player[] = [];
+    public Cards: RankSuitCard[] = [];
 
+    public CurrentSuit: Suit = suitSpades;
     private currentPlayerIndex: number = 0;
+
 
 
     public constructor(game?: Game) {
@@ -60,6 +63,7 @@ class Game {
         copy.DrawDeck = this.DrawDeck;
         copy.DiscardDeck = this.DiscardDeck;
         copy.Players = this.Players;
+        copy.CurrentSuit = this.CurrentSuit;
         copy.SetCurrentPlayerIndex(this.currentPlayerIndex);
         return copy;
     }
@@ -69,6 +73,10 @@ class Game {
         if (this.Players[this.currentPlayerIndex].IsComputer) {
             this.ComputerTurn();
         }
+    }
+
+    private GetCurrentPlayer(): Player {
+        return this.Players[this.currentPlayerIndex];
     }
 
     private Init(cards: RankSuitCard[]): void {
@@ -96,11 +104,12 @@ class Game {
         }
 
         this.DiscardDeck.SetContents([cards[deckIndex]]);
+        this.CurrentSuit = this.DiscardDeck.Contents[0].Suit;
         deckIndex = deckIndex + 1;
 
         this.DrawDeck.SetContents(cards.slice(deckIndex));
 
-        if (this.Players[this.currentPlayerIndex].IsComputer) {
+        if (this.GetCurrentPlayer().IsComputer) {
             this.ComputerTurn();
         }
 
@@ -108,15 +117,55 @@ class Game {
 
     public Action(card: RankSuitCard): Game {
         //alert("action called on " + card.Rank + " " + card.Suit.SuitName)
-        const c = this.Players[this.currentPlayerIndex].CardContainers[0].RemoveCard(card);
-        if (c) this.DiscardDeck?.AddCard(c);
+
+        if (this.DrawDeck.TopCard().Id === card.Id) {
+            const c = this.DrawDeck.RemoveCard(card);
+            if (c) this.GetCurrentPlayer().CardContainers[0].AddCard(c);
+        } else {
+            const c = this.GetCurrentPlayer().CardContainers[0].RemoveCard(card);
+            if (c) this.PlayCard(c);
+        }
+
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.length;
         return this.Copy();
     }
 
+    private PlayCard(card: RankSuitCard): void {
+        this.DiscardDeck?.AddCard(card);
+        this.CurrentSuit = card.Suit;
+    }
+
+    public IsPlayEnabled(card: RankSuitCard): boolean {
+        if (this.GetCurrentPlayer().IsComputer) {
+            return false;
+        }
+
+        if (this.DrawDeck.TopCard().Id === card.Id) {
+            return true;
+        }
+
+        if (this.GetCurrentPlayer().CardContainers[0].Contents.some(c => c.Id === card.Id)) {
+            return this.IsPlayAllowed(card);
+        }
+
+        return false;
+    }
+
+    public IsPlayAllowed(card: RankSuitCard): boolean {
+        return card.Rank === "8"
+                || this.CurrentSuit === card.Suit
+                || this.DiscardDeck.TopCard().Rank === card.Rank;
+    }
+
     public ComputerTurn() {
         setTimeout(() => {
-            this.Players[this.currentPlayerIndex].CardContainers[0].Contents[0].SetMoving(true);
+            const playableCard = this.GetCurrentPlayer().CardContainers[0].Contents.find(c => this.IsPlayAllowed(c));
+            if (playableCard) {
+                playableCard.SetMoving(true);
+            }
+            else {
+                this.DrawDeck.TopCard().SetMoving(true);
+            }
         }, 500)
     }
 
@@ -174,6 +223,10 @@ class CardContainer {
             c.FaceUp = this.FaceUp;
         }
         this.Contents = cards;
+    }
+
+    public TopCard(): RankSuitCard {
+        return this.Contents[this.Contents.length - 1];
     }
 
     public AddCard(card: RankSuitCard) {

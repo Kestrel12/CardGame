@@ -36,3 +36,41 @@
     transform: rotate(360deg);
   }
 }
+
+
+.modal {
+    display: block;
+    position: relative;
+    top: -300px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    width: 300px;
+    height: 125px;
+
+    border-radius: .3em;
+    -moz-border-radius: .3em;
+    -webkit-border-radius: .3em;
+    -khtml-border-radius: .3em;
+    padding: .25em;
+    text-align: center;
+    font-size: 1.2em; /* @change: adjust this value to make bigger or smaller cards */
+    font-weight: normal;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    -moz-box-shadow: .2em .2em .5em #333;
+    -webkit-box-shadow: .2em .2em .5em #333;
+    box-shadow: .2em .2em .5em #333;
+}
+
+.button {
+    padding: 5px 10px;
+    display: inline-block;
+    /*border: 2px solid #79a4db */
+    border: 2px solid gray;
+    border-radius: .3em;
+    -moz-border-radius: .3em;
+    -webkit-border-radius: .3em;
+    -khtml-border-radius: .3em;
+    cursor: pointer;
+}
