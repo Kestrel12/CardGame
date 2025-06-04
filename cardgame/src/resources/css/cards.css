@@ -684,6 +684,4 @@
 
 .cardLiTransition {
     transition: all .5s;
-    opacity: 0;
-    top: -50px;
 }

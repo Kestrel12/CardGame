@@ -7,9 +7,10 @@ function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: Rank
 
     const cardClass = "card rank-" + card.Rank + " " + card.Suit.SuitName;
 
-    const [liClass, setLiClass] = useState("");
-    const [liStyle, setLiStyle] = useState({ opacity: undefined, top: undefined } as CSS.Properties);
-    [card.Moving, card.SetMoving] = useState(false);
+    const [liStyle, setLiStyle] = useState(card.IsNew ?
+        { opacity: 0, top: "-50px" }
+        : { opacity: 1, top: "0px" } as CSS.Properties);
+    [card.IsMoving, card.SetIsMoving] = useState(false);
     const liRef = useRef<HTMLLIElement>(null);
 
 
@@ -23,27 +24,21 @@ function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: Rank
 
     function triggerAction() {
         setLiStyle({ opacity: 0, top: "-50px" });
-        //setLiClass("");
 
         setTimeout(() => {
             onClick(card);
-
-            // cleanup due to the card state getting re-used
-            // by a different card when they shift down in the collection
-            //setLiClass("cardLiTransition");
-            //setLiStyle({ opacity: 1, top: "0px" });
-            //card.SetMoving(false);
         }, 500);
     }
 
     useEffect(() => {
-        if (card.Moving) {
+        if (card.IsMoving) {
             triggerAction();
         }
-    }, [card.Moving]);
+    }, [card.IsMoving]);
 
     useEffect(() => {
         setLiStyle({ opacity: 1, top: "0px" });
+        card.IsNew = false;
     }, []);
 
 

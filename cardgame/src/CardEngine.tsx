@@ -161,10 +161,10 @@ class Game {
         setTimeout(() => {
             const playableCard = this.GetCurrentPlayer().CardContainers[0].Contents.find(c => this.IsPlayAllowed(c));
             if (playableCard) {
-                playableCard.SetMoving(true);
+                playableCard.SetIsMoving(true);
             }
             else {
-                this.DrawDeck.TopCard().SetMoving(true);
+                this.DrawDeck.TopCard().SetIsMoving(true);
             }
         }, 500)
     }
@@ -177,15 +177,18 @@ class Card {
     public readonly Id: number;
     public FaceUp: boolean;
 
-    public SetMoving: (b: boolean) => void;
-    public Moving: boolean; // true when card is being moved by computer
+    public SetIsMoving: (b: boolean) => void;
+    public IsMoving: boolean; // true when card is being moved by computer
+
+    public IsNew: boolean;
 
     public constructor(id: number) {
         this.Id = id;
         this.Container = null;
         this.FaceUp = false;
-        this.Moving = false;
-        this.SetMoving = (b: boolean) => this.Moving = b;
+        this.IsMoving = false;
+        this.IsNew = false;
+        this.SetIsMoving = (b: boolean) => this.IsMoving = b;
     }
 
 }
@@ -219,7 +222,8 @@ class CardContainer {
         //alert("SetContents called on " + this.ContainerName + " with " + cards.length + " cards.");
         for (const c of cards) {
             c.Container = this;
-            c.Moving = false;
+            c.IsMoving = false;
+            c.IsNew = false;
             c.FaceUp = this.FaceUp;
         }
         this.Contents = cards;
@@ -231,7 +235,8 @@ class CardContainer {
 
     public AddCard(card: RankSuitCard) {
         card.Container = this;
-        card.Moving = false;
+        card.IsMoving = false;
+        card.IsNew = true;
         card.FaceUp = this.FaceUp;
         this.Contents = [...this.Contents, card];
     }
