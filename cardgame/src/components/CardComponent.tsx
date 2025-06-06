@@ -19,8 +19,7 @@ function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: Rank
 
         if (!game.IsPlayEnabled(card)) { return; }
 
-        triggerAction();
-
+        animateCardUp().then(() => onClick(card));
     }
 
     async function animateCardUp() {
@@ -28,23 +27,16 @@ function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: Rank
         await new Promise(r => setTimeout(r, DataStore.Config.AnimationTimeMs));
     }
 
-    function triggerAction() {
-        setLiStyle({ opacity: 0, top: "-50px" });
-
-        setTimeout(() => {
-            onClick(card);
-        }, 500);
-    }
-
     useEffect(() => {
         if (card.IsMoving) {
-            triggerAction();
+            animateCardUp();
         }
     }, [card.IsMoving]);
 
     useEffect(() => {
         setLiStyle({ opacity: 1, top: "0px" });
         card.IsNew = false;
+        card.Animate = animateCardUp;
     }, []);
 
 

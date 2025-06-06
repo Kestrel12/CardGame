@@ -13,50 +13,19 @@ class Suit {
     }
 }
 
-const suitSpades = new Suit("spades", "♠", "black");
-const suitHearts = new Suit("hearts", "♥", "red");
-const suitDiams = new Suit("diams", "♦", "red");
-const suitClubs = new Suit("clubs", "♣", "black");
-
-const suits = [suitSpades, suitHearts, suitDiams, suitClubs];
-const values = ["7", "8", "9", "10", "J", "Q", "K", "A"];
-
-
 class Game {
 
-    public DrawDeck: CardContainer;
-    public DiscardDeck: CardContainer;
+    public DrawDeck: CardContainer = new CardContainer("draw", [], (c) => { }, false);
+    public DiscardDeck: CardContainer = new CardContainer("draw", [], (c) => { }, false);
     public Players: Player[] = [];
     public Cards: RankSuitCard[] = [];
 
-    public CurrentSuit: Suit = suitSpades;
+    public CurrentSuit: Suit = new Suit("uninitialized", "x", "black");
     private currentPlayerIndex: number = 0;
 
     private computerTurnDelay = DataStore.Config.ComputerTurnDelay;
 
-    public constructor(game?: Game) {
-
-        if (game) {
-            this.DrawDeck = game.DrawDeck;
-            this.DiscardDeck = game.DiscardDeck;
-            this.Players = game.Players
-        } else {
-
-            this.DrawDeck = new CardContainer("draw", false, []);
-            this.DiscardDeck = new CardContainer("discard", true, []);
-
-            const cards: RankSuitCard[] = [];
-            let cardId = 0;
-            for (const s of suits) {
-                for (const v of values) {
-                    cards.push(new RankSuitCard(cardId, v, s));
-                    cardId = cardId + 1;
-                }
-            }
-
-            this.Init(cards);
-        }
-    }
+    public constructor() { }
 
     public Copy(): Game {
         const copy = new Game();
@@ -79,23 +48,26 @@ class Game {
         return this.Players[this.currentPlayerIndex];
     }
 
-    private Init(cards: RankSuitCard[]): void {
+    public Init(cards: RankSuitCard[], decks: CardContainer[], players: Player[]): void {
         //alert("init called");
         const handSize = 5;
 
-        this.Players.push(new Player(false, [new CardContainer("hand", true, [])]));
-        this.Players.push(new Player(true, [new CardContainer("hand", false, [])]));
+        const drawDeck = decks.find(x => x.ContainerName === "draw");
+        if (!drawDeck) throw "missing draw deck";
+        this.DrawDeck = drawDeck;
+
+        const discDeck = decks.find(x => x.ContainerName === "discard");
+        if (!discDeck) throw "missing discard deck";
+        this.DiscardDeck = discDeck;
+
+        this.Players = players;
 
         if (this.Players.length * handSize + 1 > cards.length) {
             alert("Not enough cards to complete setup");
             return;
         }
 
-        // Shuffle
-        for (let i = cards.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [cards[i], cards[j]] = [cards[j], cards[i]];
-        }
+        this.Shuffle(cards);
 
         let deckIndex = 0;
         for (const p of this.Players) {
@@ -117,7 +89,7 @@ class Game {
 
     // Not sure if it's possible, but if the computer somehow ends up with an empty
     // draw deck and no valid moves, it can pass null in to pass its turn.
-    public Action(card: RankSuitCard | null): Game {
+    public Action(card: RankSuitCard | null) {
         //alert("action called on " + card.Rank + " " + card.Suit.SuitName)
 
         if (card) {
@@ -130,8 +102,14 @@ class Game {
             }
         }
 
-        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.length;
-        return this.Copy();
+        if (this.DrawDeck.Contents.length == 0) {
+            const topCard = this.DiscardDeck.TopCard();
+            this.DrawDeck.SetContents(
+                this.Shuffle(this.DiscardDeck.Contents.slice(0, this.DiscardDeck.Contents.length - 2)));
+            this.DiscardDeck.SetContents([topCard]);
+        }
+
+        this.SetCurrentPlayerIndex((this.currentPlayerIndex + 1) % this.Players.length);
     }
 
     private PlayCard(card: RankSuitCard): void {
@@ -165,10 +143,15 @@ class Game {
         setTimeout(() => {
             const playableCard = this.GetCurrentPlayer().CardContainers[0].Contents.find(c => this.IsPlayAllowed(c));
             if (playableCard) {
-                playableCard.SetIsMoving(true);
+                //playableCard.SetIsMoving(true);
+                playableCard.Animate().then(
+                    () => this.Action(playableCard)
+                );
             }
             else if (this.DrawDeck.Contents.length > 0) {
-                this.DrawDeck.TopCard().SetIsMoving(true);
+                this.DrawDeck.TopCard().Animate().then(
+                    () => this.Action(this.DrawDeck.TopCard())
+                );
             }
             else {
                 this.Action(null);
@@ -176,6 +159,13 @@ class Game {
         }, this.computerTurnDelay)
     }
 
+    private Shuffle(cards: RankSuitCard[]): RankSuitCard[] {
+        for (let i = cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        return cards;
+    }
 }
 
 class Card {
@@ -186,6 +176,8 @@ class Card {
 
     public SetIsMoving: (b: boolean) => void;
     public IsMoving: boolean; // true when card is being moved by computer
+
+    public Animate: () => Promise<void> = () => new Promise(() => { });
 
     public IsNew: boolean;
 
@@ -213,16 +205,20 @@ class RankSuitCard extends Card {
 
 }
 
+type SetContentsFunc = (c: RankSuitCard[]) => void;
+
 class CardContainer {
 
     public readonly ContainerName: string;
     public readonly FaceUp: boolean;
     public Contents: RankSuitCard[];
+    private SetContentsInternal: SetContentsFunc;
 
-    public constructor(containerName: string, faceUp: boolean, contents: RankSuitCard[]) {
+    public constructor(containerName: string, contents: RankSuitCard[], setContents: SetContentsFunc, faceUp: boolean) {
         this.ContainerName = containerName;
         this.FaceUp = faceUp;
-        this.Contents = contents;
+        this.Contents = contents.slice();
+        this.SetContentsInternal = setContents;
     }
 
     public SetContents(cards: RankSuitCard[]) {
@@ -233,7 +229,8 @@ class CardContainer {
             c.IsNew = false;
             c.FaceUp = this.FaceUp;
         }
-        this.Contents = cards;
+        this.Contents = cards.slice();
+        this.SetContentsInternal(this.Contents);
     }
 
     public TopCard(): RankSuitCard {
@@ -246,6 +243,7 @@ class CardContainer {
         card.IsNew = true;
         card.FaceUp = this.FaceUp;
         this.Contents = [...this.Contents, card];
+        this.SetContentsInternal(this.Contents);
     }
 
     public RemoveCard(card: RankSuitCard): RankSuitCard | null {
@@ -256,6 +254,7 @@ class CardContainer {
         //alert("newContents.length = " + newContents.length);
         removed.Container = null;
         this.Contents = newContents;
+        this.SetContentsInternal(this.Contents);
         return removed;
     }
 
