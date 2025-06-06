@@ -42,29 +42,40 @@ export default function BoardEights() {
 
 			<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
 
-				<ul className="hand">
+			<div className="playArea">
+					<ul className="hand">
 					{game.Players[1].CardContainers[0].Contents.map(c =>
 						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
-				</ul>
+						</ul>
+				</div>
 
 				<hr />
 
-				<ul style={{ display: "inline-block", width: "200px", height: "150px" }} className="deck">
+			<div className="playArea">
+				<ul style={{ display: "inline-block", width: "110px", height: "100px" }} className="deck">
 					{game.DrawDeck.Contents.slice(-10).map(c =>
 						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
-				</ul>
+					</ul>
 
-				<ul style={{display:"inline-block", width: "200px", height: "150px"}} className="deck">
+
+				<ul style={{display:"inline-block", width: "110px", height: "100px"}} className="deck">
 					{game.DiscardDeck.Contents.slice(-10).map(c =>
 						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
-				</ul>
+					</ul>
+
+					<div className="suitToken">
+						Current Suit: <span style={{ color: game.CurrentSuit.Color }}>{game.CurrentSuit.SuitIcon}</span>
+						</div>
+					</div>
 
 				<hr />
 
+				<div>
 				<ul className="hand">
 					{game.Players[0].CardContainers[0].Contents.map(c =>
 						<RankSuitCardComponent key={c.Id}  game={game} card={c} onClick={OnCardClick} />)}
-				</ul>
+						</ul>
+				</div>
 
 			</div>
 

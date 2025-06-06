@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Game, Card, RankSuitCard } from '../CardEngine';
+import { DataStore } from '../DataStore';
 import type CSS from 'csstype';
 
 
@@ -20,6 +21,11 @@ function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: Rank
 
         triggerAction();
 
+    }
+
+    async function animateCardUp() {
+        setLiStyle({ opacity: 0, top: "-50px" });
+        await new Promise(r => setTimeout(r, DataStore.Config.AnimationTimeMs));
     }
 
     function triggerAction() {

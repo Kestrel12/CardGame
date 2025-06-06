@@ -468,8 +468,8 @@
 .playingCards ul.hand,
 .playingCards ul.deck {
     list-style-type: none;
-    padding: 0;
-    margin: 0 0 1.5em 0;
+    padding: 0em 2em 0em 0em;
+    margin: 0;
     position: relative;
     clear: both;
 }
@@ -487,7 +487,7 @@
 
 .playingCards ul.hand,
 .playingCards ul.deck {
-    height: 8em;
+    height: 7em;
 }
 .playingCards ul.hand li,
 .playingCards ul.deck li {
@@ -671,17 +671,3 @@
 .playingCards ul.deck li:nth-child(30) { left: 58px; }
 .playingCards ul.deck li:nth-child(31) { left: 60px; }
 .playingCards ul.deck li:nth-child(32) { left: 62px; }
-
-
-/* additional customizations
-********************************************************************/
-
-/*.playingCards .card .moving {
-    position: fixed;
-    transition: top 1s, left 1s;
-    
-}*/
-
-.cardLiTransition {
-    transition: all .5s;
-}

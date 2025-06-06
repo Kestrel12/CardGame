@@ -1,4 +1,4 @@
-﻿
+﻿import { DataStore } from "./DataStore";
 
 class Suit {
 
@@ -32,7 +32,7 @@ class Game {
     public CurrentSuit: Suit = suitSpades;
     private currentPlayerIndex: number = 0;
 
-
+    private computerTurnDelay = DataStore.Config.ComputerTurnDelay;
 
     public constructor(game?: Game) {
 
@@ -115,15 +115,19 @@ class Game {
 
     }
 
-    public Action(card: RankSuitCard): Game {
+    // Not sure if it's possible, but if the computer somehow ends up with an empty
+    // draw deck and no valid moves, it can pass null in to pass its turn.
+    public Action(card: RankSuitCard | null): Game {
         //alert("action called on " + card.Rank + " " + card.Suit.SuitName)
 
-        if (this.DrawDeck.TopCard().Id === card.Id) {
-            const c = this.DrawDeck.RemoveCard(card);
-            if (c) this.GetCurrentPlayer().CardContainers[0].AddCard(c);
-        } else {
-            const c = this.GetCurrentPlayer().CardContainers[0].RemoveCard(card);
-            if (c) this.PlayCard(c);
+        if (card) {
+            if (this.DrawDeck.TopCard()?.Id === card.Id) {
+                const c = this.DrawDeck.RemoveCard(card);
+                if (c) this.GetCurrentPlayer().CardContainers[0].AddCard(c);
+            } else {
+                const c = this.GetCurrentPlayer().CardContainers[0].RemoveCard(card);
+                if (c) this.PlayCard(c);
+            }
         }
 
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.length;
@@ -163,10 +167,13 @@ class Game {
             if (playableCard) {
                 playableCard.SetIsMoving(true);
             }
-            else {
+            else if (this.DrawDeck.Contents.length > 0) {
                 this.DrawDeck.TopCard().SetIsMoving(true);
             }
-        }, 500)
+            else {
+                this.Action(null);
+            }
+        }, this.computerTurnDelay)
     }
 
 }
@@ -262,6 +269,14 @@ class Player {
     public constructor(isComputer: boolean, cardContainers: CardContainer[]) {
         this.IsComputer = isComputer;
         this.CardContainers = cardContainers; 
+    }
+
+    public GetWinMessage() {
+        if (this.IsComputer) {
+            return "You Lose!";
+        } else {
+            return "You Win!";
+        }
     }
 
 }

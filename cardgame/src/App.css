@@ -74,3 +74,25 @@
     -khtml-border-radius: .3em;
     cursor: pointer;
 }
+
+.suitToken {
+    padding: 5px 10px;
+    display: inline-block;
+    position: relative;
+    /*border: 2px solid #79a4db */
+    border: 2px solid gray;
+    border-radius: .3em;
+    -moz-border-radius: .3em;
+    -webkit-border-radius: .3em;
+    -khtml-border-radius: .3em;
+    margin-left: 3em;
+    margin-top: 1em;
+}
+
+.cardLiTransition {
+    transition: all .5s;
+}
+
+.playArea {
+    padding: 5px;
+}
