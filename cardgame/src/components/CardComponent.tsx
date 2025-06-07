@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Game, Card, RankSuitCard } from '../CardEngine';
 import { DataStore } from '../DataStore';
-import type CSS from 'csstype';
+import type * as CSS from 'csstype';
 
 
 function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: RankSuitCard, onClick: ((c:RankSuitCard) => void) }) {

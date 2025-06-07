@@ -19,23 +19,17 @@ class Game {
     public DiscardDeck: CardContainer = new CardContainer("draw", [], (c) => { }, false);
     public Players: Player[] = [];
     public Cards: RankSuitCard[] = [];
+    public Suits: Suit[] = [];
 
-    public CurrentSuit: Suit = new Suit("uninitialized", "x", "black");
+    private currentSuit: Suit = new Suit("uninitialized", "x", "black");
     private currentPlayerIndex: number = 0;
+
+    private GetSelectedSuit: () => Promise<string> = () => new Promise((resolve, reject) => resolve("uninitialized"));
+    private setCurrentSuitNotify: (s: Suit) => void = (s) => { };
 
     private computerTurnDelay = DataStore.Config.ComputerTurnDelay;
 
     public constructor() { }
-
-    public Copy(): Game {
-        const copy = new Game();
-        copy.DrawDeck = this.DrawDeck;
-        copy.DiscardDeck = this.DiscardDeck;
-        copy.Players = this.Players;
-        copy.CurrentSuit = this.CurrentSuit;
-        copy.SetCurrentPlayerIndex(this.currentPlayerIndex);
-        return copy;
-    }
 
     public SetCurrentPlayerIndex(playerIndex: number): void {
         this.currentPlayerIndex = playerIndex;
@@ -48,8 +42,14 @@ class Game {
         return this.Players[this.currentPlayerIndex];
     }
 
-    public Init(cards: RankSuitCard[], decks: CardContainer[], players: Player[]): void {
-        //alert("init called");
+    public Init(
+        cards: RankSuitCard[], suits: Suit[],
+        decks: CardContainer[], players: Player[],
+        setCurrentSuit: ((s: Suit) => void),
+        getSelectedSuit: (() => Promise<string>)): void {
+
+        this.Suits = suits;
+
         const handSize = 5;
 
         const drawDeck = decks.find(x => x.ContainerName === "draw");
@@ -67,6 +67,9 @@ class Game {
             return;
         }
 
+        this.setCurrentSuitNotify = setCurrentSuit;
+        this.GetSelectedSuit = getSelectedSuit;
+
         this.Shuffle(cards);
 
         let deckIndex = 0;
@@ -76,7 +79,7 @@ class Game {
         }
 
         this.DiscardDeck.SetContents([cards[deckIndex]]);
-        this.CurrentSuit = this.DiscardDeck.Contents[0].Suit;
+        this.SetCurrentSuit(this.DiscardDeck.Contents[0].Suit);
         deckIndex = deckIndex + 1;
 
         this.DrawDeck.SetContents(cards.slice(deckIndex));
@@ -89,7 +92,7 @@ class Game {
 
     // Not sure if it's possible, but if the computer somehow ends up with an empty
     // draw deck and no valid moves, it can pass null in to pass its turn.
-    public Action(card: RankSuitCard | null) {
+    public async Action(card: RankSuitCard | null): Promise<void> {
         //alert("action called on " + card.Rank + " " + card.Suit.SuitName)
 
         if (card) {
@@ -98,7 +101,7 @@ class Game {
                 if (c) this.GetCurrentPlayer().CardContainers[0].AddCard(c);
             } else {
                 const c = this.GetCurrentPlayer().CardContainers[0].RemoveCard(card);
-                if (c) this.PlayCard(c);
+                if (c) await this.PlayCard(c);
             }
         }
 
@@ -112,9 +115,21 @@ class Game {
         this.SetCurrentPlayerIndex((this.currentPlayerIndex + 1) % this.Players.length);
     }
 
-    private PlayCard(card: RankSuitCard): void {
+    private async PlayCard(card: RankSuitCard): Promise<void> {
         this.DiscardDeck?.AddCard(card);
-        this.CurrentSuit = card.Suit;
+        if (card.Rank === "8") {
+            if (this.GetCurrentPlayer().IsComputer) {
+                this.SetCurrentSuit(card.Suit);
+            } else {
+                const selectedSuitName = await this.GetSelectedSuit();
+                this.SetCurrentSuit(this.Suits.find(s => s.SuitName === selectedSuitName) || this.Suits[0]);
+                //this.GetSelectedSuit().then(suitName =>
+                //    this.CurrentSuit = (this.Suits.find(s => s.SuitName === suitName) || this.Suits[0]));
+            }
+        }
+        else {
+            this.SetCurrentSuit(card.Suit);
+        }
     }
 
     public IsPlayEnabled(card: RankSuitCard): boolean {
@@ -135,7 +150,7 @@ class Game {
 
     public IsPlayAllowed(card: RankSuitCard): boolean {
         return card.Rank === "8"
-                || this.CurrentSuit === card.Suit
+                || this.currentSuit === card.Suit
                 || this.DiscardDeck.TopCard().Rank === card.Rank;
     }
 
@@ -157,6 +172,11 @@ class Game {
                 this.Action(null);
             }
         }, this.computerTurnDelay)
+    }
+
+    private SetCurrentSuit(s: Suit): void {
+        this.currentSuit = s;
+        this.setCurrentSuitNotify(this.currentSuit);
     }
 
     private Shuffle(cards: RankSuitCard[]): RankSuitCard[] {

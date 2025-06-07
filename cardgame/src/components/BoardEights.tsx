@@ -2,6 +2,7 @@
 import { Game, RankSuitCard, CardContainer, Player, Suit } from '../CardEngine';
 import { RankSuitCardComponent } from './CardComponent';
 import { HandComponent, DeckComponent } from './ContainerComponents';
+import { promiseSuitSelect } from './SuitSelectComponent';
 
 export default function BoardEights() {
 
@@ -15,7 +16,13 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 	const suitDiams = new Suit("diams", "♦", "red");
 	const suitClubs = new Suit("clubs", "♣", "black");
 
+	//const suitRed = new Suit("red", "⬤", "red");
+	//const suitGreen = new Suit("hearts", "▲", "green");
+	//const suitBlue = new Suit("diams", "✤", "blue");
+	//const suitYellow = new Suit("clubs", "★", "purple");
+
 	const suits = [suitSpades, suitHearts, suitDiams, suitClubs];
+	//const suits = [suitRed, suitGreen, suitBlue, suitYellow];
 	const values = ["7", "8", "9", "10", "J", "Q", "K", "A"];
 
 	const cards: RankSuitCard[] = [];
@@ -33,6 +40,8 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 	const [discardDeck, setDiscardDeck] = useState([] as RankSuitCard[]);
 	const discardContainer = new CardContainer("discard", discardDeck, setDiscardDeck, true);
 
+	const [currentSuit, setCurrentSuit] = useState(suitSpades);
+
 	const [p0Hand, setP0Hand] = useState([] as RankSuitCard[]);
 	const p0HandContainer = new CardContainer("hand", p0Hand, setP0Hand, true);
 	const p0 = new Player(false, [p0HandContainer]);
@@ -41,8 +50,13 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 	const p1HandContainer = new CardContainer("hand", p1Hand, setP1Hand, false);
 	const p1 = new Player(true, [p1HandContainer]);
 
+	async function getSelectedSuit(): Promise<string> {
+		await new Promise(r => setTimeout(r, 500));
+		return await promiseSuitSelect();
+	}
+
 	useEffect(() => {
-		game.Init(cards, [drawContainer, discardContainer], [p0, p1]);
+		game.Init(cards, suits, [drawContainer, discardContainer], [p0, p1], setCurrentSuit, getSelectedSuit);
 	}, []);
 
 	function OnCardClick(card: RankSuitCard) {
@@ -69,7 +83,7 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 						<DeckComponent game={game} container={game.DiscardDeck} onCardClick={OnCardClick} />
 
 						<div className="suitToken">
-							Current Suit: <span style={{ color: game.CurrentSuit.Color }}>{game.CurrentSuit.SuitIcon}</span>
+							Current Suit: <span style={{ color: currentSuit.Color }}>{currentSuit.SuitIcon}</span>
 							</div>
 						</div>
 
