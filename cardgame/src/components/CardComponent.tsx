@@ -34,9 +34,11 @@ function RankSuitCardComponent({ game, card, onClick }: { game: Game, card: Rank
     }, [card.IsMoving]);
 
     useEffect(() => {
-        setLiStyle({ opacity: 1, top: "0px" });
-        card.IsNew = false;
-        card.Animate = animateCardUp;
+        setTimeout(() => {
+            setLiStyle({ opacity: 1, top: "0px" });
+            card.IsNew = false;
+            card.Animate = animateCardUp;
+        }, 10);
     }, []);
 
 

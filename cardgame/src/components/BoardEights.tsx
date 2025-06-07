@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { Game, RankSuitCard, CardContainer, Player, Suit } from '../CardEngine';
 import { RankSuitCardComponent } from './CardComponent';
+import { HandComponent, DeckComponent } from './ContainerComponents';
 
 export default function BoardEights() {
 
@@ -44,10 +45,6 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 		game.Init(cards, [drawContainer, discardContainer], [p0, p1]);
 	}, []);
 
-	function OnCardPreClick(card: RankSuitCard) {
-
-	}
-
 	function OnCardClick(card: RankSuitCard) {
 		game.Action(card);
 	}
@@ -56,76 +53,63 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 
 	return (
 		<>
-		<div className="playingCards">
+			<div className="playingCards">
 
-			<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
+				<div style={{ maxWidth: 400, marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
 
-			<div className="playArea">
-					<ul className="hand">
-					{game.Players[1].CardContainers[0].Contents.map(c =>
-						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
-						</ul>
-				</div>
-
-				<hr />
-
-			<div className="playArea">
-				<ul style={{ display: "inline-block", width: "110px", height: "100px" }} className="deck">
-					{game.DrawDeck.Contents.slice(-10).map(c =>
-						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
-					</ul>
-
-
-				<ul style={{display:"inline-block", width: "110px", height: "100px"}} className="deck">
-					{game.DiscardDeck.Contents.slice(-10).map(c =>
-						<RankSuitCardComponent key={c.Id} game={game} card={c} onClick={OnCardClick} />)}
-					</ul>
-
-					<div className="suitToken">
-						Current Suit: <span style={{ color: game.CurrentSuit.Color }}>{game.CurrentSuit.SuitIcon}</span>
-						</div>
+					<div className="playArea">
+						<HandComponent game={game} container={game.Players[1].CardContainers[0]} onCardClick={OnCardClick} />
 					</div>
 
-				<hr />
+					<hr />
 
-				<div>
-				<ul className="hand">
-					{game.Players[0].CardContainers[0].Contents.map(c =>
-						<RankSuitCardComponent key={c.Id}  game={game} card={c} onClick={OnCardClick} />)}
-						</ul>
+					<div className="playArea">
+						<DeckComponent game={game} container={game.DrawDeck} onCardClick={OnCardClick} /> 
+
+						<DeckComponent game={game} container={game.DiscardDeck} onCardClick={OnCardClick} />
+
+						<div className="suitToken">
+							Current Suit: <span style={{ color: game.CurrentSuit.Color }}>{game.CurrentSuit.SuitIcon}</span>
+							</div>
+						</div>
+
+					<hr />
+
+					<div className="playArea">
+
+						<HandComponent game={game} container={game.Players[0].CardContainers[0]} onCardClick={OnCardClick} />
+
+					</div>
+
 				</div>
 
+				<div style={{ display: "none" }} className="modal">
+					<h3>
+						You Win!
+					</h3>
+					<div className="button">
+						Restart
+					</div>
+				</div>
+
+				<div style={{display: "none"}} className="modal">
+					<h3>
+						Wild Card &mdash; Pick a Suit!
+					</h3>
+						<div className="button">
+							<span style={{ color: "red" }}>♥</span>
+						</div>
+						<div className="button">
+							♠
+						</div>
+						<div className="button">
+							<span style={{ color: "red" }}>♦</span>
+						</div>
+						<div className="button">
+							♣
+						</div>
+				</div>
 			</div>
-
-		</div>
-
-		<div style={{ display: "none" }} className="modal">
-			<h3>
-				You Win!
-			</h3>
-			<div className="button">
-				Restart
-			</div>
-		</div>
-
-			<div style={{display: "none"}} className="modal">
-			<h3>
-				Wild Card &mdash; Pick a Suit!
-			</h3>
-				<div className="button">
-					<span style={{ color: "red" }}>♥</span>
-				</div>
-				<div className="button">
-					♠
-				</div>
-				<div className="button">
-					<span style={{ color: "red" }}>♦</span>
-				</div>
-				<div className="button">
-					♣
-				</div>
-		</div>
-
 		</>
 	)
 }
