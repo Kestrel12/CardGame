@@ -2,7 +2,7 @@
 import { create } from 'react-modal-promise'
 import type * as CSS from 'csstype';
 
-function SuitSelectComponent({ isOpen, onResolve, onReject }:
+function SuitSelectModal({ isOpen, onResolve, onReject }:
 	{isOpen: boolean, onResolve:((c: string) => void), onReject: (() => void)}) {
 
 	const [modalStyle, setModalStyle] = useState({
@@ -37,4 +37,4 @@ function SuitSelectComponent({ isOpen, onResolve, onReject }:
     );
 }
 
-export const promiseSuitSelect = create(SuitSelectComponent);
+export const promiseSuitSelect = create(SuitSelectModal);

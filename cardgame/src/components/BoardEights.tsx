@@ -2,7 +2,8 @@
 import { Game, RankSuitCard, CardContainer, Player, Suit } from '../CardEngine';
 import { RankSuitCardComponent } from './CardComponent';
 import { HandComponent, DeckComponent } from './ContainerComponents';
-import { promiseSuitSelect } from './SuitSelectComponent';
+import { promiseSuitSelect } from './SuitSelectModal';
+import { promiseGameEnd } from './GameEndModal';
 
 export default function BoardEights() {
 
@@ -55,8 +56,12 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 		return await promiseSuitSelect();
 	}
 
+	async function notifyGameEnd(msg: string): Promise<void> {
+		return await promiseGameEnd({ message: msg });
+	}
+
 	useEffect(() => {
-		game.Init(cards, suits, [drawContainer, discardContainer], [p0, p1], setCurrentSuit, getSelectedSuit);
+		game.Init(cards, suits, [drawContainer, discardContainer], [p0, p1], setCurrentSuit, getSelectedSuit, notifyGameEnd);
 	}, []);
 
 	function OnCardClick(card: RankSuitCard) {

@@ -23,6 +23,7 @@ class Game {
 
     private currentSuit: Suit = new Suit("uninitialized", "x", "black");
     private currentPlayerIndex: number = 0;
+    private isPaused: boolean = false;
 
     private GetSelectedSuit: () => Promise<string> = () => new Promise((resolve, reject) => resolve("uninitialized"));
     private setCurrentSuitNotify: (s: Suit) => void = (s) => { };
@@ -46,7 +47,8 @@ class Game {
         cards: RankSuitCard[], suits: Suit[],
         decks: CardContainer[], players: Player[],
         setCurrentSuit: ((s: Suit) => void),
-        getSelectedSuit: (() => Promise<string>)): void {
+        getSelectedSuit: (() => Promise<string>),
+        notifyGameEnd: ((s: string) => void)): void {
 
         this.Suits = suits;
 
@@ -116,6 +118,7 @@ class Game {
     }
 
     private async PlayCard(card: RankSuitCard): Promise<void> {
+        this.isPaused = true;
         this.DiscardDeck?.AddCard(card);
         if (card.Rank === "8") {
             if (this.GetCurrentPlayer().IsComputer) {
@@ -130,10 +133,11 @@ class Game {
         else {
             this.SetCurrentSuit(card.Suit);
         }
+        this.isPaused = false;
     }
 
     public IsPlayEnabled(card: RankSuitCard): boolean {
-        if (this.GetCurrentPlayer().IsComputer) {
+        if (this.GetCurrentPlayer().IsComputer || this.isPaused) {
             return false;
         }
 
