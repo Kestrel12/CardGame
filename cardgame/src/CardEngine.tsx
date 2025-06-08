@@ -21,26 +21,27 @@ class Game {
     public Cards: RankSuitCard[] = [];
     public Suits: Suit[] = [];
 
-    private currentSuit: Suit = new Suit("uninitialized", "x", "black");
-    private currentPlayerIndex: number = 0;
-    private isPaused: boolean = false;
+    private CurrentSuit: Suit = new Suit("uninitialized", "x", "black");
+    private CurrentPlayerIndex: number = 0;
+    private IsPaused: boolean = false;
 
     private GetSelectedSuit: () => Promise<string> = () => new Promise((resolve, reject) => resolve("uninitialized"));
     private setCurrentSuitNotify: (s: Suit) => void = (s) => { };
+    private NotifyGameEnd: (s: string) => Promise<void> = (s) => new Promise((resolve, reject) => resolve());
 
     private computerTurnDelay = DataStore.Config.ComputerTurnDelay;
 
     public constructor() { }
 
     public SetCurrentPlayerIndex(playerIndex: number): void {
-        this.currentPlayerIndex = playerIndex;
-        if (this.Players[this.currentPlayerIndex].IsComputer) {
+        this.CurrentPlayerIndex = playerIndex;
+        if (this.Players[this.CurrentPlayerIndex].IsComputer) {
             this.ComputerTurn();
         }
     }
 
     private GetCurrentPlayer(): Player {
-        return this.Players[this.currentPlayerIndex];
+        return this.Players[this.CurrentPlayerIndex];
     }
 
     public Init(
@@ -48,7 +49,7 @@ class Game {
         decks: CardContainer[], players: Player[],
         setCurrentSuit: ((s: Suit) => void),
         getSelectedSuit: (() => Promise<string>),
-        notifyGameEnd: ((s: string) => void)): void {
+        notifyGameEnd: ((s: string) => Promise<void>)): void {
 
         this.Suits = suits;
 
@@ -71,6 +72,8 @@ class Game {
 
         this.setCurrentSuitNotify = setCurrentSuit;
         this.GetSelectedSuit = getSelectedSuit;
+
+        this.NotifyGameEnd = notifyGameEnd;
 
         this.Shuffle(cards);
 
@@ -107,6 +110,13 @@ class Game {
             }
         }
 
+
+        // Check game state for special conditions: win, re-shuffle discard
+        if (this.GetCurrentPlayer().CardContainers[0].Contents.length === 0) {
+            this.IsPaused = true;
+            await this.NotifyGameEnd(this.GetCurrentPlayer().GetWinMessage());
+        }
+
         if (this.DrawDeck.Contents.length == 0) {
             const topCard = this.DiscardDeck.TopCard();
             this.DrawDeck.SetContents(
@@ -114,11 +124,11 @@ class Game {
             this.DiscardDeck.SetContents([topCard]);
         }
 
-        this.SetCurrentPlayerIndex((this.currentPlayerIndex + 1) % this.Players.length);
+        this.SetCurrentPlayerIndex((this.CurrentPlayerIndex + 1) % this.Players.length);
     }
 
     private async PlayCard(card: RankSuitCard): Promise<void> {
-        this.isPaused = true;
+        this.IsPaused = true;
         this.DiscardDeck?.AddCard(card);
         if (card.Rank === "8") {
             if (this.GetCurrentPlayer().IsComputer) {
@@ -133,11 +143,11 @@ class Game {
         else {
             this.SetCurrentSuit(card.Suit);
         }
-        this.isPaused = false;
+        this.IsPaused = false;
     }
 
     public IsPlayEnabled(card: RankSuitCard): boolean {
-        if (this.GetCurrentPlayer().IsComputer || this.isPaused) {
+        if (this.GetCurrentPlayer().IsComputer || this.IsPaused) {
             return false;
         }
 
@@ -154,7 +164,7 @@ class Game {
 
     public IsPlayAllowed(card: RankSuitCard): boolean {
         return card.Rank === "8"
-                || this.currentSuit === card.Suit
+                || this.CurrentSuit === card.Suit
                 || this.DiscardDeck.TopCard().Rank === card.Rank;
     }
 
@@ -179,8 +189,8 @@ class Game {
     }
 
     private SetCurrentSuit(s: Suit): void {
-        this.currentSuit = s;
-        this.setCurrentSuitNotify(this.currentSuit);
+        this.CurrentSuit = s;
+        this.setCurrentSuitNotify(this.CurrentSuit);
     }
 
     private Shuffle(cards: RankSuitCard[]): RankSuitCard[] {

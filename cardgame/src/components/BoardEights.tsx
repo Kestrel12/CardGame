@@ -56,12 +56,8 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 		return await promiseSuitSelect();
 	}
 
-	async function notifyGameEnd(msg: string): Promise<void> {
-		return await promiseGameEnd({ message: msg });
-	}
-
 	useEffect(() => {
-		game.Init(cards, suits, [drawContainer, discardContainer], [p0, p1], setCurrentSuit, getSelectedSuit, notifyGameEnd);
+		game.Init(cards, suits, [drawContainer, discardContainer], [p0, p1], setCurrentSuit, getSelectedSuit, promiseGameEnd);
 	}, []);
 
 	function OnCardClick(card: RankSuitCard) {
@@ -102,32 +98,6 @@ Visit https://react.dev/link/error-boundaries to learn more about error boundari
 
 				</div>
 
-				<div style={{ display: "none" }} className="modal">
-					<h3>
-						You Win!
-					</h3>
-					<div className="button">
-						Restart
-					</div>
-				</div>
-
-				<div style={{display: "none"}} className="modal">
-					<h3>
-						Wild Card &mdash; Pick a Suit!
-					</h3>
-						<div className="button">
-							<span style={{ color: "red" }}>♥</span>
-						</div>
-						<div className="button">
-							♠
-						</div>
-						<div className="button">
-							<span style={{ color: "red" }}>♦</span>
-						</div>
-						<div className="button">
-							♣
-						</div>
-				</div>
 			</div>
 		</>
 	)
