@@ -7,3 +7,41 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.bounding {
+    max-width: 1446px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.topnav {
+    overflow: hidden;
+    background-color: #333333;
+}
+
+    .topnav a {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+        .topnav a:hover {
+            background-color: #0d0d0d;
+        }
+
+        .topnav a.active {
+            background-color: #040404;
+            color: white;
+        }
+
+    .topnav .icon {
+        display: none;
+    }
+
+.nowrap {
+    white-space: nowrap;
+}
+
