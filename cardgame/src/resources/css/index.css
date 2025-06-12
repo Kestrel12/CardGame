@@ -26,6 +26,9 @@ body {
         padding: 14px 16px;
         text-decoration: none;
         font-size: 17px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 300;
+        font-style: normal;
     }
 
         .topnav a:hover {

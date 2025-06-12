@@ -346,6 +346,53 @@
     */
 }
 
+.playingCards .card.rank-Q.hearts,
+.playingCards .card.rank-Q.diams {
+    background-image: url(face-symbols/queen-red.svg);
+}
+
+.playingCards .card.rank-Q.spades,
+.playingCards .card.rank-Q.clubs {
+    background-image: url(face-symbols/queen-black.svg);
+}
+
+.playingCards .card.rank-Q {
+    background-repeat: no-repeat;
+    background-position: .9em 1.6em;
+}
+
+.playingCards .card.rank-K.hearts,
+.playingCards .card.rank-K.diams {
+    background-image: url(face-symbols/king-red.svg);
+}
+
+.playingCards .card.rank-K.spades,
+.playingCards .card.rank-K.clubs {
+    background-image: url(face-symbols/king-black.svg);
+}
+
+.playingCards .card.rank-K {
+    background-repeat: no-repeat;
+    background-position: .6em 1.5em;
+    background-size: 70% 50%;
+}
+
+.playingCards .card.rank-J.hearts,
+.playingCards .card.rank-J.diams {
+    background-image: url(face-symbols/jack-red.svg);
+}
+
+.playingCards .card.rank-J.spades,
+.playingCards .card.rank-J.clubs {
+    background-image: url(face-symbols/jack-black.svg);
+}
+
+.playingCards .card.rank-J {
+    background-repeat: no-repeat;
+    background-position: .65em 1.5em;
+    background-size: 70% 50%;
+}
+
 /*.playingCards.faceImages .card.rank-j.diams  { background-image: url(faces/JD.gif); }
 .playingCards.faceImages .card.rank-j.hearts { background-image: url(faces/JH.gif); }
 .playingCards.faceImages .card.rank-j.spades { background-image: url(faces/JS.gif); }
@@ -383,21 +430,32 @@
     letter-spacing: normal;
     line-height: 1;
 }
-.playingCards .card.rank-J .suit:after {
+
+
+.playingCards .card.rank-A.hearts .suit:after {
     font-size: 3em;
     line-height: 2.2;
-    content: "⚜";
+    content: "♥";
 }
-.playingCards .card.rank-Q .suit:after {
-    font-size: 2.5em;
-    line-height: 2.5;
-    content: "♕";
-}
-.playingCards .card.rank-K .suit:after {
+
+.playingCards .card.rank-A.spades .suit:after {
     font-size: 3em;
-    line-height: 2.5;
-    content: "♔";
+    line-height: 2.2;
+    content: "♠";
 }
+
+.playingCards .card.rank-A.diams .suit:after {
+    font-size: 3em;
+    line-height: 2.2;
+    content: "♦";
+}
+
+.playingCards .card.rank-A.clubs .suit:after {
+    font-size: 3em;
+    line-height: 2.2;
+    content: "♣";
+}
+
 /* joker (inner symbol) */
 .playingCards.faceImages .card.joker .rank:after {
     content: "";
