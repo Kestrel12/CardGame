@@ -5,5 +5,5 @@ A simple card game app made with React. Eventually I'd like to set it up so the 
 
 Build: npx vite build --base="./"
 
-Playing card css is by [Anika Henke](selfthinker.org)  
+Playing card css is by [Anika Henke](http://selfthinker.org)  
 http://github.com/selfthinker/CSS-Playing-Cards
